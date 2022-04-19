@@ -1,0 +1,76 @@
+---
+title: "Project Analyses"
+author: "Rachel Rineman"
+date: "4/7/2022"
+output: html_document
+---
+
+Hypothesis 1: Emerging adults with narcissistic traits will have higher levels of perceived social support. (Correlation and Regression)
+
+Hypothesis 2: Narcissistic traits in emerging adults will predict a greater need to belong. (Regression)
+
+Hypothesis 3: Narcissistic traits in emerging adults will predict more frequent reports of perceived interpersonal transgressions. (regression)
+
+```{r Rename Dataset}
+library(haven)
+e2dat<- read_sav("EAMMi2-CleanData.sav")
+```
+
+Open needed libraries, check column names to find my variables, summaries of each variable
+```{r Open Libraries, check data}
+library(Rmisc)
+library(ggplot2)
+colnames(e2dat)
+summary(e2dat$NPI_sum)
+summary(e2dat$belongSUM)
+summary(e2dat$supportSUM)
+summary(e2dat$freq)
+
+class(e2dat$NPI_sum)
+class(e2dat$belongSUM)
+class(e2dat$supportSUM)
+class(e2dat$freq)
+
+```
+
+```{r correlation NPI and Perceived Social Support}
+cor.test(e2dat$NPI_sum, e2dat$supportSUM, alternative = "greater")
+```
+
+```{r regression NPI and Perceived Social Support}
+supNPIlm<- lm(e2dat$supportSUM ~ e2dat$NPI_sum, data = e2dat )
+summary(supNPIlm)
+```
+
+```{r boxplot to look for outlier}
+ggplot(e2dat, aes(supportSUM)) +geom_boxplot() + theme_classic()
+```
+
+Visual for Correlation:
+```{r}
+ggplot(e2dat, aes(NPI_sum, supportSUM)) + geom_point( color = "plum4") + theme_classic()+ ylab(label = "Social Support Scores") + xlab(label = "Narcissism Scores") + geom_smooth(method = "lm", color = "darkslategray4")
+```
+
+```{r regression for Frequency of Transgressions predicted by Narcissism score}
+cor.test(e2dat$NPI_sum, e2dat$freq, alternative = "greater")
+
+NPI_TGlm<- lm(freq ~ NPI_sum, data = e2dat)
+summary(NPI_TGlm)
+```
+
+```{r Visual for freq of transgressions and Narcissim}
+ggplot(e2dat, aes(NPI_sum,freq)) + geom_point(color = "darkslategray4") + theme_classic() +ylab(label= "Transgressions (past 2 weeks)") + xlab(label = "Narcissism Scores") + geom_smooth(method = "lm", color = "plum4")
+```
+
+
+```{r Regression for need to belong}
+NPI_BelLM<- lm(belongSUM~NPI_sum, data = e2dat)
+summary(NPI_BelLM)
+```
+ 
+
+Visual for regression (not sig)
+```{r}
+ggplot(e2dat, aes(NPI_sum, belongSUM)) + geom_point(color = "skyblue4") + theme_classic() + ylab(label = "Belonging Scores") + xlab(label = "Narcissism Scores")
+```
+
